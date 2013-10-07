@@ -279,6 +279,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_betweenLoadCommitAndFirstFrame(false)
     , m_customLayoutWidth(0)
     , m_relayoutRequested(false)
+    , m_overviewRequested(false)
     , m_useDefaultContentItemSize(true)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
@@ -933,6 +934,10 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
     Q_Q(QQuickWebView);
     m_pageViewportControllerClient.reset(new PageViewportControllerClientQt(q, pageView.data()));
     m_pageViewportController.reset(new PageViewportController(webPageProxy.get(), m_pageViewportControllerClient.data()));
+    if (m_overviewRequested) {
+        m_pageViewportController->setOverview(true);
+    }
+
     pageView->eventHandler()->setViewportController(m_pageViewportControllerClient.data());
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
@@ -966,6 +971,13 @@ void QQuickWebViewFlickablePrivate::handleMouseEvent(QMouseEvent* event)
 
     // FIXME: Update the axis locker for mouse events as well.
     pageView->eventHandler()->handleInputEvent(event);
+}
+
+void QQuickWebViewFlickablePrivate::setOverview(bool enabled)
+{
+    m_overviewRequested = enabled;
+    if (m_pageViewportController)
+        m_pageViewportController->setOverview(enabled);
 }
 
 QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView, QQuickWebViewPrivate* webViewPrivate)
@@ -1389,6 +1401,24 @@ void QQuickWebViewExperimental::setCustomLayoutWidth(int value)
     d->m_customLayoutWidth = value;
     d->m_relayoutRequested = true;
     emit customLayoutWidthChanged();
+}
+
+bool QQuickWebViewExperimental::overview() const
+{
+    Q_D(const QQuickWebView);
+    d->m_overviewRequested;
+}
+
+void QQuickWebViewExperimental::setOverview(bool enabled)
+{
+    Q_D(QQuickWebView);
+    // Due to virtual method we first set value and
+    // then compare to the old value to the new value.
+    bool oldValue = d->m_overviewRequested;
+    d->setOverview(enabled);
+    if (oldValue != d->m_overviewRequested) {
+        emit overviewChanged();
+    }
 }
 
 /*!
