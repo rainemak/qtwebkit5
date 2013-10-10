@@ -35,6 +35,7 @@
 #include <WKString.h>
 #include <WKStringQt.h>
 #include <WKType.h>
+#include <QDebug>
 
 namespace WebKit {
 
@@ -173,6 +174,7 @@ QString QtWebContext::preparedStoragePath(StorageType type)
     case LocalStorage:
         path = defaultLocation(QStandardPaths::DataLocation) % QStringLiteral("LocalStorage");
         QDir::root().mkpath(path);
+        qDebug() << "LocalStorage path: " << path;
         break;
     case CookieStorage:
         path = defaultLocation(QStandardPaths::DataLocation);
