@@ -203,7 +203,7 @@ enable?(WEB_AUDIO) {
 
 use?(3D_GRAPHICS) {
     win32: {
-        win32-g++*: {
+        mingw: {
             # Make sure OpenGL libs are after the webcore lib so MinGW can resolve symbols
             contains(QT_CONFIG, opengles2) {
                 CONFIG(debug, debug|release):contains(QT_CONFIG, angle) {
@@ -245,6 +245,8 @@ have?(sqlite3) {
         LIBS += -lsqlite3
     }
 }
+
+use?(system_leveldb): LIBS += -lleveldb -lmemenv
 
 use?(libjpeg): LIBS += -ljpeg
 use?(libpng): LIBS += -lpng
@@ -304,5 +306,5 @@ linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 
-!production_build:have?(FONTCONFIG): PKGCONFIG += fontconfig
+build?(qttestsupport):have?(FONTCONFIG): PKGCONFIG += fontconfig
 

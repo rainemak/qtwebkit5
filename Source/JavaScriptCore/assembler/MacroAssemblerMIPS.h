@@ -396,8 +396,10 @@ public:
 
     void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value && !m_fixedWidth)
+        if (!imm.m_value && !m_fixedWidth) {
+            move(src, dest);
             return;
+        }
 
         if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth) {
             m_assembler.ori(dest, src, imm.m_value);
@@ -619,9 +621,9 @@ public:
         m_assembler.sqrtd(dst, src);
     }
     
-    void absDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID src, FPRegisterID dst)
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        m_assembler.absd(dst, src);
     }
 
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
@@ -1186,7 +1188,15 @@ public:
         return false;
 #endif
     }
-    static bool supportsFloatingPointAbs() { return false; }
+
+    static bool supportsFloatingPointAbs()
+    {
+#if WTF_MIPS_DOUBLE_FLOAT
+        return true;
+#else
+        return false;
+#endif
+    }
 
     // Stack manipulation operations:
     //
@@ -2619,7 +2629,7 @@ public:
     {
         m_assembler.truncwd(fpTempRegister, src);
         m_assembler.mfc1(dest, fpTempRegister);
-        return branch32(branchType == BranchIfTruncateFailed ? Equal : NotEqual, dest, TrustedImm32(0));
+        return branch32(branchType == BranchIfTruncateFailed ? Equal : NotEqual, dest, TrustedImm32(0x7fffffff));
     }
 
     // Result is undefined if the value is outside of the integer range.

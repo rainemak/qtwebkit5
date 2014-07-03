@@ -79,16 +79,23 @@
 #endif
 #endif
 
+/* CPU(MIPS64) - MIPS 64-bit */
+#if defined(__mips64)
+#define WTF_CPU_MIPS64 1
+#define WTF_MIPS_ARCH __mips64
 /* CPU(MIPS) - MIPS 32-bit */
 /* Note: Only O32 ABI is tested, so we enable it for O32 ABI for now.  */
-#if (defined(mips) || defined(__mips__) || defined(MIPS) || defined(_MIPS_)) \
+#elif (defined(mips) || defined(__mips__) || defined(MIPS) || defined(_MIPS_)) \
     && defined(_ABIO32)
 #define WTF_CPU_MIPS 1
+#define WTF_MIPS_ARCH __mips
+#endif
+
+#if CPU(MIPS) || CPU(MIPS64)
 #if defined(__MIPSEB__)
 #define WTF_CPU_BIG_ENDIAN 1
 #endif
 #define WTF_MIPS_PIC (defined __PIC__)
-#define WTF_MIPS_ARCH __mips
 #define WTF_MIPS_ISA(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH == v)
 #define WTF_MIPS_ISA_AT_LEAST(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH >= v)
 #define WTF_MIPS_ARCH_REV __mips_isa_rev
@@ -165,6 +172,11 @@
 #if   defined(__x86_64__) \
     || defined(_M_X64)
 #define WTF_CPU_X86_64 1
+
+#if defined(__ILP32__)
+#define WTF_CPU_X32 1
+#endif
+
 #endif
 
 /* CPU(ARM) - ARM, any version*/
@@ -322,7 +334,15 @@
 
 #endif /* ARM */
 
-#if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(SPARC)
+/* CPU(AARCH64) - AArch64 */
+#if defined(__aarch64__)
+#define WTF_CPU_AARCH64 1
+#if defined(__AARCH64EB__)
+#define WTF_CPU_BIG_ENDIAN 1
+#endif
+#endif
+
+#if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(SPARC) || CPU(MIPS64)
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 
@@ -720,11 +740,13 @@
 #endif
 
 #if !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32_64)
-#if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS))) \
+#if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS)) && !CPU(X32)) \
     || (CPU(IA64) && !CPU(IA64_32)) \
     || CPU(ALPHA) \
     || CPU(SPARC64) \
     || CPU(S390X) \
+    || CPU(AARCH64) \
+    || CPU(MIPS64) \
     || CPU(PPC64)
 #define WTF_USE_JSVALUE64 1
 #else
@@ -734,6 +756,11 @@
 
 /* Disable the JIT on versions of GCC prior to 4.1 */
 #if !defined(ENABLE_JIT) && COMPILER(GCC) && !GCC_VERSION_AT_LEAST(4, 1, 0)
+#define ENABLE_JIT 0
+#endif
+
+/* Disable JIT on x32 */
+#if CPU(X32)
 #define ENABLE_JIT 0
 #endif
 
@@ -872,7 +899,7 @@
 #define ENABLE_REGEXP_TRACING 0
 
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if !defined(ENABLE_YARR_JIT) && (ENABLE(JIT) || ENABLE(LLINT_C_LOOP)) && !(OS(QNX) && PLATFORM(QT))
+#if !defined(ENABLE_YARR_JIT) && !ENABLE(LLINT_C_LOOP) && !(OS(QNX) && PLATFORM(QT))
 #define ENABLE_YARR_JIT 1
 
 /* Setting this flag compares JIT results with interpreter results. */

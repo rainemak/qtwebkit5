@@ -1584,19 +1584,49 @@ QQuickWebPage* QQuickWebViewExperimental::page()
     \page qtwebkit-index.html
     \title Qt WebKit
 
-    The Qt WebKit module provides the WebView API which allows QML applications
+    The Qt WebKit module provides the WebView API, which allows QML applications
     to render regions of dynamic web content. A \e{WebView} component may share
     the screen with other QML components or encompass the full screen as
     specified within the QML application.
 
-    QML WebView version 3.0 is incompatible with previous QML \l
-    {QtWebKit1::WebView} {WebView} API versions.  It allows an
-    application to load pages into the WebView, either by URL or with
-    an HTML string, and navigate within session history.  By default,
-    links to different pages load within the same WebView, but applications
-    may intercept requests to delegate links to other functions.
+    \section1 Getting Started
 
-    The following sample QML application loads a web page, responds to session
+    To use WebView in your QML document, add the following import statement:
+
+    \code
+    import QtWebKit 3.0
+    \endcode
+
+    \note Qt WebKit 3.0 is incompatible with previous Qt WebKit versions.
+
+    \section1 Examples
+
+    There are several Qt WebKit examples located in the
+    \l{Qt WebKit Examples} page.
+
+    \section1 See Also
+
+    \list
+     \li \l {Qt WebKit QML Types}{QML Types}
+    \endlist
+
+*/
+
+
+/*!
+    \qmltype WebView
+    \instantiates QQuickWebView
+    \inqmlmodule QtWebKit
+    \brief A WebView renders web content within a QML application.
+
+    \image webview.png
+
+    WebView allows an application to load pages either by URL or an HTML
+    string, and navigate within the session history. By default, links to
+    different pages are loaded within the same WebView, but applications
+    can choose to delegate those links to other functions.
+
+    The following example loads a web page, responds to session
     history context, and intercepts requests for external links. It also makes
     use of \l ScrollView from \l {Qt Quick Controls} to add scroll bars for
     the content area.
@@ -1626,20 +1656,6 @@ QQuickWebPage* QQuickWebViewExperimental::page()
         }
     }
     \endcode
-
-    \section1 Examples
-
-    There are several Qt WebKit examples located in the
-    \l{Qt WebKit Examples} page.
-
-*/
-
-
-/*!
-    \qmltype WebView
-    \instantiates QQuickWebView
-    \inqmlmodule QtWebKit 3.0
-    \brief A WebView renders web content within a QML application
 */
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)
@@ -1918,7 +1934,7 @@ QVariant QQuickWebView::inputMethodQuery(Qt::InputMethodQuery property) const
     case Qt::ImMaximumTextLength:
         return QVariant(); // No limit.
     case Qt::ImHints:
-        return int(Qt::InputMethodHints(state.inputMethodHints));
+        return QVariant(static_cast<int>(state.inputMethodHints));
     default:
         // Rely on the base implementation for ImEnabled, ImHints and ImPreferredLanguage.
         return QQuickFlickable::inputMethodQuery(property);
@@ -2184,6 +2200,10 @@ void QQuickWebView::handleFlickableMouseRelease(const QPointF& position, qint64 
     was originally retrieved from \c http://www.example.com/documents/overview.html
     and that was the base url, then an image referenced with the relative url \c diagram.png
     would be looked for at \c{http://www.example.com/documents/diagram.png}.
+
+    It is important to keep in mind that the \a html string will be converted to UTF-16
+    internally. Textual resources, such as scripts or style sheets, will be treated as
+    UTF-16 as well, unless they have an explicit charset property in their referencing tag.
 
     If an \a unreachableUrl is passed it is used as the url for the loaded
     content. This is typically used to display error pages for a failed
