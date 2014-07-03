@@ -44,6 +44,7 @@ defineTest(detectFeatures) {
     config_libxslt: WEBKIT_CONFIG += xslt
     config_libzlib: WEBKIT_CONFIG += use_zlib
     config_libwebp: WEBKIT_CONFIG += use_webp
+    config_leveldb: WEBKIT_CONFIG += use_system_leveldb
 
     # We can't use Qt's 3rdparty sources for libjpeg and libpng outside of qtbase, but if Qt
     # is using the system libraries, use them to take advantage of the WebCore image decoders as well.
@@ -94,9 +95,6 @@ defineTest(detectFeatures) {
     # WebGL support - only enabled if we can use 3D graphics
     use?(3d_graphics): WEBKIT_CONFIG += webgl
 
-    # Enable CSS shaders when CSS filters and WebGL are enabled
-    enable?(css_filters):enable?(webgl): WEBKIT_CONFIG += css_shaders
-
     # HTML5 Media Support for builds with GStreamer
     unix:!mac:!contains(QT_CONFIG, no-pkg-config) {
         packagesExist("glib-2.0 gio-2.0 gstreamer-1.0 gstreamer-plugins-base-1.0") {
@@ -123,8 +121,8 @@ defineTest(detectFeatures) {
         isEmpty(SQLITE3SRCDIR):isEmpty(_QMAKE_SUPER_CACHE_): error("WebKit requires SQLite. Either make it available via pkg-config, set $SQLITE3SRCDIR or build WebKit under qt5.git.")
     }
 
-    # Gamepad API Support (depends on udev)
-    linux: WEBKIT_CONFIG += gamepad
+    # Gamepad API Support (depends on udev and linux/joystick.h)
+    linux:!android: WEBKIT_CONFIG += gamepad
 
     # Support for Graphics Surface
     # GraphicsSurface requires GraphicsContext3D and hence use_3d_graphics
@@ -137,13 +135,14 @@ defineTest(detectFeatures) {
     # Slider Touch is sensible to use when compiling WebKit2
     enable?(touch_events): WEBKIT_CONFIG += touch_slider
 
-
-
-    # ---------------- Sanitize features -------------------
+    # IndexedDB requires leveldb
+    enable?(indexed_database): WEBKIT_CONFIG += use_leveldb
 
     export(WEBKIT_CONFIG)
     export(CONFIGURE_WARNINGS)
 }
+
+# ---------------- Sanitize features -------------------
 
 defineTest(santizeFeatures) {
     # If we are doing a production_build we should only enable Geolocation support if QtPositioning exists. In developer builds we can use Mock implementations.
@@ -169,6 +168,9 @@ defineTest(santizeFeatures) {
 
     # GStreamer uses Glib
     use?(gstreamer): WEBKIT_CONFIG += use_glib
+
+    # VideoTrack requires video
+    !enable?(video): WEBKIT_CONFIG -= video_track
 
     # Minibrowser must be able to query for QtTestSupport
     build?(qttestsupport): WEBKIT_CONFIG += have_qttestsupport
