@@ -24,6 +24,8 @@
 #include "Region.h"
 #include <wtf/MathExtras.h>
 
+#include <QDebug>
+
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
 namespace WebCore {
@@ -330,6 +332,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
     Region overlapRegion;
     Region nonOverlapRegion;
     computeOverlapRegions(overlapRegion, nonOverlapRegion, ResolveSelfOverlapAlways);
+    qDebug() <<  overlapRegion.isEmpty();
     if (overlapRegion.isEmpty()) {
         paintSelfAndChildrenWithReplica(options);
         return;
@@ -405,10 +408,12 @@ PassRefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapp
 
 static void commitSurface(const TextureMapperPaintOptions& options, PassRefPtr<BitmapTexture> surface, const IntRect& rect, float opacity)
 {
+    qDebug() << "-------- commit surface";
     options.textureMapper->bindSurface(options.surface.get());
     TransformationMatrix targetTransform;
     targetTransform.translate(options.offset.width(), options.offset.height());
     targetTransform.multiply(options.transform);
+    qDebug() << surface.get() << rect.x() << rect.y() << rect.width() << rect.height() << opacity;
     options.textureMapper->drawTexture(*surface.get(), rect, targetTransform, opacity);
 }
 
@@ -445,6 +450,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOp
 
 void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options)
 {
+    qDebug() << "paint recursive:" << isVisible() << shouldBlend();
     if (!isVisible())
         return;
 
