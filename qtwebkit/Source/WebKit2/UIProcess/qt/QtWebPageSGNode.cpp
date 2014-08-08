@@ -51,7 +51,7 @@ public:
 
     virtual void render(const RenderState& state)
     {
-        qDebug() << "render!!" << pageNode();
+        qDebug() << "render!!" << pageNode() << clipRect();
 
         TransformationMatrix renderMatrix;
         if (pageNode()->devicePixelRatio() != 1.0) {
@@ -73,9 +73,7 @@ public:
     ~ContentsSGNode()
     {
         qDebug() << "purgeGLRes!!";
-
-        //coordinatedGraphicsScene()->purgeGLResources();
-        //coordinatedGraphicsScene()->setActive(false);
+//        coordinatedGraphicsScene()->purgeGLResources();
     }
 
     const QtWebPageSGNode* pageNode() const

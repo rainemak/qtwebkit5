@@ -193,6 +193,8 @@ protected:
     static void processDidBecomeUnresponsive(WKPageRef, const void* clientInfo);
     static void processDidBecomeResponsive(WKPageRef, const void* clientInfo);
 
+    static void finishForceRepaint(WKErrorRef, void *clientInfo);
+
     QQuickWebViewPrivate(QQuickWebView* viewport);
     RefPtr<WebKit::WebPageProxy> webPageProxy;
     RefPtr<WebKit::WebCookieManagerProxy> cookieManagerProxy;

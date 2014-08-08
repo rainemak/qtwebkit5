@@ -665,6 +665,13 @@ void QQuickWebViewPrivate::processDidBecomeResponsive(WKPageRef, const void* cli
     emit q->experimental()->processDidBecomeResponsive();
 }
 
+void QQuickWebViewPrivate::finishForceRepaint(WKErrorRef, void *clientInfo)
+{
+    qDebug() << "finishForceRepaint!!";
+    QQuickWebView* q = toQQuickWebViewPrivate(clientInfo)->q_ptr;
+    q->update();
+}
+
 PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
 {
     return DrawingAreaProxyImpl::create(webPageProxy.get());
@@ -721,6 +728,10 @@ void QQuickWebViewPrivate::_q_onSceneGraphInitialized()
         return;
 
     scene->setActive(true);
+
+    if (webPage) {
+        WKPageForceRepaint(webPage.get(), this, finishForceRepaint);
+    }
 }
 
 void QQuickWebViewPrivate::_q_onSceneGraphInvalidated()
@@ -732,7 +743,8 @@ void QQuickWebViewPrivate::_q_onSceneGraphInvalidated()
     if (!scene)
         return;
 
-    scene->purgeGLResources();
+    //scene->purgeGLResources();
+    scene->setActive(false);
 }
 
 void QQuickWebViewPrivate::_q_onWindowChanged(QQuickWindow *window)
