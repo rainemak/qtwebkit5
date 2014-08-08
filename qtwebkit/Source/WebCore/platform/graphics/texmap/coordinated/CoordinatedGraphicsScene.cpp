@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <QDebug>
+
 #if USE(COORDINATED_GRAPHICS)
 
 #include "CoordinatedGraphicsScene.h"
@@ -81,10 +83,15 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
 
     adjustPositionForFixedLayers();
     TextureMapperLayer* currentRootLayer = rootLayer();
+
+    qDebug() << "current root layer:" << currentRootLayer;
+
     if (!currentRootLayer)
         return;
 
     TextureMapperLayer* layer = currentRootLayer;
+
+    qDebug() << "layer:" << layer << layer << m_textureMapper.get();
 
     if (!layer)
         return;
