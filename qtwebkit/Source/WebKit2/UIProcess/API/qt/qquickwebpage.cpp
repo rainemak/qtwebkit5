@@ -32,6 +32,8 @@
 #include <WKPage.h>
 #include <WebCore/CoordinatedGraphicsScene.h>
 
+#include <QDebug>
+
 using namespace WebKit;
 
 QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
@@ -71,12 +73,14 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     QQuickWebViewPrivate* webViewPrivate = QQuickWebViewPrivate::get(d->viewportItem);
 
     WebCore::CoordinatedGraphicsScene* scene = webViewPrivate->coordinatedGraphicsScene();
+    qDebug() << "updatePaintNode scene:" << scene << "oldNode:" << oldNode;
     if (!scene)
         return oldNode;
 
     QtWebPageSGNode* node = static_cast<QtWebPageSGNode*>(oldNode);
 
     const QWindow* window = this->window();
+    qDebug() << "updatePaintNode node:" << node << "window:" << window;
     ASSERT(window);
 
     WKPageRef pageRef = webViewPrivate->webPage.get();
