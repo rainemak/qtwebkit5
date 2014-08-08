@@ -321,6 +321,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     viewport->setPixelAligned(true);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
     QObject::connect(viewport, SIGNAL(urlChanged()), viewport, SLOT(_q_onUrlChanged()));
+    QObject::connect(viewport, SIGNAL(windowChanged(QQuickWindow*)), viewport, SLOT(_q_onWindowChanged(QQuickWindow*)));
     pageView.reset(new QQuickWebPage(viewport));
 }
 
@@ -350,9 +351,6 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     pageEventHandler.reset(new QtWebPageEventHandler(webPage.get(), pageView.data(), q_ptr));
     QObject::connect(pageEventHandler.data(), SIGNAL(pinching(bool)), q_ptr, SLOT(_q_onPinchingChanged(bool)));
-    QObject::connect(q_ptr->window(), SIGNAL(sceneGraphInitialized()), q_ptr, SLOT(_q_onSceneGraphInitialized()), Qt::DirectConnection);
-    QObject::connect(q_ptr->window(), SIGNAL(sceneGraphInvalidated()), q_ptr, SLOT(_q_onSceneGraphInvalidated()), Qt::DirectConnection);
-
     {
         WKPageFindClient findClient;
         memset(&findClient, 0, sizeof(WKPageFindClient));
@@ -735,6 +733,13 @@ void QQuickWebViewPrivate::_q_onSceneGraphInvalidated()
         return;
 
     scene->purgeGLResources();
+}
+
+void QQuickWebViewPrivate::_q_onWindowChanged(QQuickWindow *window)
+{
+    qDebug() << "Window changed!!!";
+    QObject::connect(window, SIGNAL(sceneGraphInitialized()), q_ptr, SLOT(_q_onSceneGraphInitialized()), Qt::DirectConnection);
+    QObject::connect(window, SIGNAL(sceneGraphInvalidated()), q_ptr, SLOT(_q_onSceneGraphInvalidated()), Qt::DirectConnection);
 }
 
 /* Called either when the url changes, or when the icon for the current page changes */

@@ -108,6 +108,7 @@ public:
 
     void _q_onSceneGraphInitialized();
     void _q_onSceneGraphInvalidated();
+    void _q_onWindowChanged(QQuickWindow* window);
 
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, WebKit::QtWebPageUIClient::FileChooserType);
     quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
