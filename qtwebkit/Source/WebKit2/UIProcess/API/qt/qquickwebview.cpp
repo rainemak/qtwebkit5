@@ -350,6 +350,8 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     pageEventHandler.reset(new QtWebPageEventHandler(webPage.get(), pageView.data(), q_ptr));
     QObject::connect(pageEventHandler.data(), SIGNAL(pinching(bool)), q_ptr, SLOT(_q_onPinchingChanged(bool)));
+    QObject::connect(q_ptr->window(), SIGNAL(sceneGraphInitialized()), q_ptr, SLOT(_q_onSceneGraphInitialized()), Qt::DirectConnection);
+    QObject::connect(q_ptr->window(), SIGNAL(sceneGraphInvalidated()), q_ptr, SLOT(_q_onSceneGraphInvalidated()), Qt::DirectConnection);
 
     {
         WKPageFindClient findClient;
@@ -709,6 +711,35 @@ void QQuickWebViewPrivate::_q_onPinchingChanged(bool pinching)
 
     m_pinching = pinching;
     emit experimental->pinchingChanged();
+}
+
+void QQuickWebViewPrivate::_q_onSceneGraphInitialized()
+{
+    qDebug() << "moro scene graph initialzed!";
+    QQuickWebViewPrivate* webViewPrivate = QQuickWebViewPrivate::get(d->viewportItem);
+
+    webPageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
+
+    WebCore::CoordinatedGraphicsScene* scene = webViewPrivate->coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    scene->setActive(true);
+}
+
+void QQuickWebViewPrivate::_q_onSceneGraphInvalidated()
+{
+    qDebug() << "moro scene graph invalidated!";
+
+    QQuickWebViewPrivate* webViewPrivate = QQuickWebViewPrivate::get(d->viewportItem);
+
+    webPageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
+
+    WebCore::CoordinatedGraphicsScene* scene = webViewPrivate->coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    scene->purgeGLResources();
 }
 
 /* Called either when the url changes, or when the icon for the current page changes */

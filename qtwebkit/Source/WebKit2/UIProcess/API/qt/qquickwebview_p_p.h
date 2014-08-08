@@ -106,6 +106,9 @@ public:
     void _q_onIconChangedForPageURL(const QString&);
     void _q_onPinchingChanged(bool);
 
+    void _q_onSceneGraphInitialized();
+    void _q_onSceneGraphInvalidated();
+
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, WebKit::QtWebPageUIClient::FileChooserType);
     quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
     void runJavaScriptAlert(const QString&);

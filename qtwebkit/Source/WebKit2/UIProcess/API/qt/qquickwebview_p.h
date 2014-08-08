@@ -219,6 +219,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_onIconChangedForPageURL(const QString&));
     Q_PRIVATE_SLOT(d_func(), void _q_onPinchingChanged(bool));
 
+    Q_PRIVATE_SLOT(d_func(), void _q_onSceneGraphInitialized());
+    Q_PRIVATE_SLOT(d_func(), void _q_onSceneGraphInvalidated());
+
     // Hides QObject::d_ptr allowing us to use the convenience macros.
     QScopedPointer<QQuickWebViewPrivate> d_ptr;
 

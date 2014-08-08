@@ -75,7 +75,7 @@ public:
         qDebug() << "purgeGLRes!!";
 
         //coordinatedGraphicsScene()->purgeGLResources();
-        coordinatedGraphicsScene()->setActive(false);
+        //coordinatedGraphicsScene()->setActive(false);
     }
 
     const QtWebPageSGNode* pageNode() const
