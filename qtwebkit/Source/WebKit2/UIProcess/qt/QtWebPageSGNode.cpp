@@ -74,13 +74,14 @@ public:
     {
         qDebug() << "purgeGLRes!!";
 
-//        coordinatedGraphicsScene()->purgeGLResources();
+        //coordinatedGraphicsScene()->purgeGLResources();
+        coordinatedGraphicsScene()->setActive(false);
     }
 
     const QtWebPageSGNode* pageNode() const
     {
         const QtWebPageSGNode* parent = static_cast<QtWebPageSGNode*>(this->parent());
-        qDebug() << "pageNode!!!" << parent << this;
+//        qDebug() << "pageNode!!!" << parent << this;
         ASSERT(parent);
         return parent;
     }
@@ -95,7 +96,7 @@ private:
 
         for (const QSGClipNode* clip = clipList(); clip; clip = clip->clipList()) {
             QMatrix4x4 clipMatrix;
-            qDebug() << "clipRect !!!" << pageNode();
+            //qDebug() << "clipRect !!!" << pageNode();
             if (pageNode()->devicePixelRatio() != 1.0) {
                 clipMatrix.scale(pageNode()->devicePixelRatio());
                 if (clip->matrix())
