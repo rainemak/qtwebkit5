@@ -29,6 +29,8 @@
 #include <WebCore/TransformationMatrix.h>
 #include <private/qsgrendernode_p.h>
 
+#include <QDebug>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -38,6 +40,7 @@ public:
     ContentsSGNode(PassRefPtr<CoordinatedGraphicsScene> scene)
         : m_scene(scene)
     {
+        qDebug() << "construct!!" << coordinatedGraphicsScene();
         coordinatedGraphicsScene()->setActive(true);
     }
 
@@ -48,6 +51,8 @@ public:
 
     virtual void render(const RenderState& state)
     {
+        qDebug() << "render!!" << pageNode();
+
         TransformationMatrix renderMatrix;
         if (pageNode()->devicePixelRatio() != 1.0) {
             renderMatrix.scale(pageNode()->devicePixelRatio());
@@ -67,13 +72,18 @@ public:
 
     ~ContentsSGNode()
     {
+        qDebug() << "purgeGLRes!!";
+
         coordinatedGraphicsScene()->purgeGLResources();
     }
 
     const QtWebPageSGNode* pageNode() const
     {
+        qDebug() << "pageNode 1 !!!";
         const QtWebPageSGNode* parent = static_cast<QtWebPageSGNode*>(this->parent());
+        qDebug() << "pageNode 1.5 !!!" << parent;
         ASSERT(parent);
+        qDebug() << "pageNode 2 !!!";
         return parent;
     }
 
@@ -87,6 +97,7 @@ private:
 
         for (const QSGClipNode* clip = clipList(); clip; clip = clip->clipList()) {
             QMatrix4x4 clipMatrix;
+            qDebug() << "clipRect !!!" << pageNode();
             if (pageNode()->devicePixelRatio() != 1.0) {
                 clipMatrix.scale(pageNode()->devicePixelRatio());
                 if (clip->matrix())
@@ -135,6 +146,7 @@ QtWebPageSGNode::QtWebPageSGNode()
     , m_devicePixelRatio(1)
 {
     appendChildNode(m_backgroundNode);
+    qDebug() << "qtwebpagesgnode!!!";
 }
 
 void QtWebPageSGNode::setBackground(const QRectF& rect, const QColor& color)
@@ -152,6 +164,7 @@ void QtWebPageSGNode::setScale(float scale)
 
 void QtWebPageSGNode::setCoordinatedGraphicsScene(PassRefPtr<WebCore::CoordinatedGraphicsScene> scene)
 {
+    qDebug() << "setCoordinatedGraphicsScene!!!" << m_contentsNode;
     if (m_contentsNode && m_contentsNode->coordinatedGraphicsScene() == scene)
         return;
 
