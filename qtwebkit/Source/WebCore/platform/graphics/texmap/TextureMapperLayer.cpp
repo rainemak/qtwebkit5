@@ -177,10 +177,13 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
 {
     paintSelf(options);
 
+    qDebug() << m_children.isEmpty() << m_children.size();
+
     if (m_children.isEmpty())
         return;
 
     bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
+    qDebug() << shouldClip;
     if (shouldClip) {
         TransformationMatrix clipTransform;
         clipTransform.translate(options.offset.width(), options.offset.height());
