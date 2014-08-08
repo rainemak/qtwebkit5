@@ -716,11 +716,9 @@ void QQuickWebViewPrivate::_q_onPinchingChanged(bool pinching)
 void QQuickWebViewPrivate::_q_onSceneGraphInitialized()
 {
     qDebug() << "moro scene graph initialzed!";
-    QQuickWebViewPrivate* webViewPrivate = QQuickWebViewPrivate::get(d->viewportItem);
-
     webPageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
 
-    WebCore::CoordinatedGraphicsScene* scene = webViewPrivate->coordinatedGraphicsScene();
+    WebCore::CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
     if (!scene)
         return;
 
@@ -730,12 +728,9 @@ void QQuickWebViewPrivate::_q_onSceneGraphInitialized()
 void QQuickWebViewPrivate::_q_onSceneGraphInvalidated()
 {
     qDebug() << "moro scene graph invalidated!";
-
-    QQuickWebViewPrivate* webViewPrivate = QQuickWebViewPrivate::get(d->viewportItem);
-
     webPageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
 
-    WebCore::CoordinatedGraphicsScene* scene = webViewPrivate->coordinatedGraphicsScene();
+    WebCore::CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
     if (!scene)
         return;
 
