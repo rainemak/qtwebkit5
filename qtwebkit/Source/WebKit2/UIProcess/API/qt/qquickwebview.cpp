@@ -667,8 +667,8 @@ void QQuickWebViewPrivate::processDidBecomeResponsive(WKPageRef, const void* cli
 
 void QQuickWebViewPrivate::finishForceRepaint(WKErrorRef, void *clientInfo)
 {
-    qDebug() << "finishForceRepaint!!";
     QQuickWebView* q = toQQuickWebViewPrivate(clientInfo)->q_ptr;
+    qDebug() << "finishForceRepaint!!" << q->boundingRect();
     q->update();
 }
 
@@ -1972,6 +1972,8 @@ QQuickWebView::QQuickWebView(QQuickItem* parent)
 {
     Q_D(QQuickWebView);
     d->initialize();
+
+    setFlag(ItemHasContents, true);
 }
 
 QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)
@@ -2304,6 +2306,7 @@ bool QQuickWebView::childMouseEventFilter(QQuickItem* item, QEvent* event)
 void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
     Q_D(QQuickWebView);
+    qDebug() << "--------- geometry:" << newGeometry << oldGeometry;
     QQuickFlickable::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
         d->updateViewportSize();
