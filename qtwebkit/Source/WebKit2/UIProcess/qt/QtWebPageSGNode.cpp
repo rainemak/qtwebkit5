@@ -74,16 +74,14 @@ public:
     {
         qDebug() << "purgeGLRes!!";
 
-        coordinatedGraphicsScene()->purgeGLResources();
+//        coordinatedGraphicsScene()->purgeGLResources();
     }
 
     const QtWebPageSGNode* pageNode() const
     {
-        qDebug() << "pageNode 1 !!!";
         const QtWebPageSGNode* parent = static_cast<QtWebPageSGNode*>(this->parent());
-        qDebug() << "pageNode 1.5 !!!" << parent;
+        qDebug() << "pageNode!!!" << parent << this;
         ASSERT(parent);
-        qDebug() << "pageNode 2 !!!";
         return parent;
     }
 
@@ -146,7 +144,7 @@ QtWebPageSGNode::QtWebPageSGNode()
     , m_devicePixelRatio(1)
 {
     appendChildNode(m_backgroundNode);
-    qDebug() << "qtwebpagesgnode!!!";
+    qDebug() << "qtwebpagesgnode!!!" << this;
 }
 
 void QtWebPageSGNode::setBackground(const QRectF& rect, const QColor& color)
