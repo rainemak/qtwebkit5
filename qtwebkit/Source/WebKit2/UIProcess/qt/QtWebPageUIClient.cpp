@@ -32,6 +32,9 @@
 #include <WKOpenPanelResultListener.h>
 #include <WKRetainPtr.h>
 
+
+#include <QDebug>
+
 namespace WebKit {
 
 QtWebPageUIClient::QtWebPageUIClient(WKPageRef pageRef, QQuickWebView* webView)
@@ -79,7 +82,10 @@ void QtWebPageUIClient::runOpenPanel(WKOpenPanelResultListenerRef listenerRef, c
 
 void QtWebPageUIClient::mouseDidMoveOverElement(const QUrl& linkURL, const QString& linkTitle)
 {
-    emit m_webView->linkHovered(linkURL, linkTitle);
+    qDebug() << "Pinching:" << m_webView->experimental()->pinching() << "moving:" << m_webView->isMoving();
+    if (!m_webView->experimental()->pinching()) {
+        emit m_webView->linkHovered(linkURL, linkTitle);
+    }
 }
 
 void QtWebPageUIClient::permissionRequest(QWebPermissionRequest* request)
