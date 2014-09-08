@@ -425,7 +425,7 @@ void QQuickWebViewPrivate::didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef
     d->m_firstFrameRendered = false;
     d->m_relayoutRequested = d->m_customLayoutWidth > 0 ? true : false;
     if (d->m_relayoutRequested) {
-        d->webPageProxy->setFixedLayoutSize(WebCore::IntSize(0, 0));
+        d->webPageProxy->setFixedLayoutSize(WebCore::IntSize(q->experimental()->deviceWidth(), q->experimental()->deviceHeight()));
     }
 
     QWebLoadRequest loadRequest(WKURLCopyQUrl(url.get()), QQuickWebView::LoadStartedStatus);
@@ -603,7 +603,7 @@ void QQuickWebViewPrivate::didRenderFrame()
     Q_Q(QQuickWebView);
     if (m_betweenLoadCommitAndFirstFrame) {
         if (m_customLayoutWidth > 0 && m_relayoutRequested) {
-            webPageProxy->setFixedLayoutSize(WebCore::IntSize(m_customLayoutWidth, q->height()));
+            webPageProxy->setFixedLayoutSize(WebCore::IntSize(q->experimental()->deviceWidth(), q->experimental()->deviceHeight()));
             m_relayoutRequested = false;
         } else {
             emit q->experimental()->loadVisuallyCommitted();
@@ -1636,8 +1636,10 @@ void QQuickWebViewExperimental::setCustomLayoutWidth(int value)
     if (oldSize.width() == value)
         return;
 
+
     d->m_customLayoutWidth = value;
     d->m_relayoutRequested = true;
+    d->webPageProxy->setFixedLayoutSize(WebCore::IntSize(deviceWidth(), deviceHeight()));
     emit customLayoutWidthChanged();
 }
 

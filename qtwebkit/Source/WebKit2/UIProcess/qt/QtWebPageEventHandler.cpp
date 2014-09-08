@@ -154,6 +154,7 @@ void QtWebPageEventHandler::handleMouseReleaseEvent(QMouseEvent* ev)
 {
     ev->accept();
     QTransform fromItemTransform = m_webPage->transformFromItem();
+    //qDebug() <<
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, fromItemTransform, /*eventClickCount*/ 0));
 }
 
