@@ -36,6 +36,8 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 
+#include <QDebug>
+
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHostProxy.h"
 #endif
@@ -307,11 +309,15 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
 {
     ASSERT(m_currentBackingStoreStateID < m_nextBackingStoreStateID);
 
+    qDebug() << "proxy valid:" << m_webPageProxy->isValid() << m_isWaitingForDidUpdateBackingStoreState;
+
     if (!m_webPageProxy->isValid())
         return;
 
     if (m_isWaitingForDidUpdateBackingStoreState)
         return;
+
+    qebug() << "viewsize:" << m_webPageProxy->viewSize().isEmpty() << "fixed layout:" << m_webPageProxy->useFixedLayout();
 
     if (m_webPageProxy->viewSize().isEmpty() && !m_webPageProxy->useFixedLayout())
         return;

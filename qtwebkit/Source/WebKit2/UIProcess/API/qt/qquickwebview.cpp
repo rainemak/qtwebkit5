@@ -1670,7 +1670,10 @@ void QQuickWebViewExperimental::setDevicePixelRatio(qreal devicePixelRatio)
     Q_D(QQuickWebView);
     qDebug() << devicePixelRatio << d->deviceScaleFactor() <<  WKPageGetBackingScaleFactor(d->webPage.get());
     if (devicePixelRatio != d->deviceScaleFactor()) {
-        WKPageSetCustomBackingScaleFactor(d->webPage.get(), devicePixelRatio);
+//        WKPageSetCustomBackingScaleFactor(d->webPage.get(), devicePixelRatio);
+
+        d->webPageProxy->setIntrinsicDeviceScaleFactor(scaleFactor);
+
         emit devicePixelRatioChanged();
     }
 }
