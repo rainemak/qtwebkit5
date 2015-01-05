@@ -262,6 +262,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(int deviceWidth WRITE setDeviceWidth READ deviceWidth NOTIFY deviceWidthChanged)
     Q_PROPERTY(int deviceHeight WRITE setDeviceHeight READ deviceHeight NOTIFY deviceHeightChanged)
     Q_PROPERTY(int customLayoutWidth WRITE setCustomLayoutWidth READ customLayoutWidth NOTIFY customLayoutWidthChanged)
+    Q_PROPERTY(qreal devicePixelRatio READ devicePixelRatio WRITE setDevicePixelRatio NOTIFY devicePixelRatioChanged FINAL)
     Q_PROPERTY(bool overview WRITE setOverview READ overview NOTIFY overviewChanged FINAL)
     Q_PROPERTY(bool pinching READ pinching NOTIFY pinchingChanged FINAL)
 
@@ -373,6 +374,9 @@ public:
     bool overview() const;
     void setOverview(bool enabled);
 
+    qreal devicePixelRatio() const;
+    void setDevicePixelRatio(qreal devicePixelRatio);
+
     bool pinching() const;
 
     bool autoCorrect() const;
@@ -432,6 +436,7 @@ Q_SIGNALS:
     void customLayoutWidthChanged();
     void overviewChanged();
     void pinchingChanged();
+    void devicePixelRatioChanged();
 
     void temporaryCookiesChanged();
     void textFound(int matchCount);

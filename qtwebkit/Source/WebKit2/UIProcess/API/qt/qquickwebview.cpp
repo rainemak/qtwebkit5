@@ -1659,6 +1659,19 @@ void QQuickWebViewExperimental::setOverview(bool enabled)
     }
 }
 
+qreal QQuickWebViewExperimental::devicePixelRatio() const
+{
+    return d_ptr->deviceScaleFactor();
+}
+
+void QQuickWebViewExperimental::setDevicePixelRatio(qreal devicePixelRatio)
+{
+    if (devicePixelRatio != d_ptr->deviceScaleFactor()) {
+        d_ptr->setIntrinsicDeviceScaleFactor(devicePixelRatio);
+        emit devicePixelRatioChanged();
+    }
+}
+
 bool QQuickWebViewExperimental::pinching() const
 {
     Q_D(const QQuickWebView);
