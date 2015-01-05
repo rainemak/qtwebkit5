@@ -79,6 +79,7 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     QQuickWindow* window = this->window();
     ASSERT(window);
 
+#if 0
     WKPageRef pageRef = webViewPrivate->webPage.get();
     if (window && WKPageGetBackingScaleFactor(pageRef) != window->devicePixelRatio()) {
         WKPageSetCustomBackingScaleFactor(pageRef, window->devicePixelRatio());
@@ -86,6 +87,7 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
         // if tests are reading the new value between the property change and the signal emission.
         emit d->viewportItem->experimental()->test()->devicePixelRatioChanged();
     }
+#endif
 
     if (!node) {
         node = new QtWebPageSGNode;
